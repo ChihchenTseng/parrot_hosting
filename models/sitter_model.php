@@ -38,5 +38,20 @@ class Sitter {
         //執行
         $stmt -> execute();
     }
+
+    public function verifyPassword($input_password) {
+    $sql = "SELECT password FROM sitters WHERE id = :id";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->bindParam(':id', $this->id);
+    $stmt->execute();
+
+    if ($stmt->rowCount() == 0) {
+        return false;
+    }
+
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    return password_verify($input_password, $row['password']);
+}
+
 }
 ?>

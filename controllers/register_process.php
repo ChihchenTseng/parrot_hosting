@@ -1,8 +1,5 @@
 <?php
 
-session_start();
-
-
 if( !empty($_POST['id']) && !empty($_POST['name']) && !empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['phone']) && !empty($_POST['location']) )
 {
     //連
