@@ -16,18 +16,18 @@ class Sitter {
     }
 
     public function select() {
-        $sql_select = "SELECT * FROM  sitters WHERE id=:id";
+        $sql = "SELECT * FROM  sitters WHERE id=:id";
 
-        $stmt = $this->pdo -> prepare($sql_select);
+        $stmt = $this->pdo -> prepare($sql);
         $stmt -> bindParam(':id', $this->id);
         $stmt -> execute();
         return $stmt->rowCount();
     }
     public function insert() {
-        $sql_insert = "INSERT INTO sitters (id,name, email, password, phone, location)
+        $sql = "INSERT INTO sitters (id,name, email, password, phone, location)
         VALUES (:id, :name, :email, :password, :phone, :location)";
         //pdo先處理SQL語句然建立容器裝變數
-        $stmt = $this->pdo -> prepare($sql_insert);
+        $stmt = $this->pdo -> prepare($sql);
         //綁參數
         $stmt -> bindParam(':id', $this->id);
         $stmt -> bindParam(':name', $this->name);
@@ -40,18 +40,33 @@ class Sitter {
     }
 
     public function verifyPassword($input_password) {
-    $sql = "SELECT password FROM sitters WHERE id = :id";
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->bindParam(':id', $this->id);
-    $stmt->execute();
+        $sql = "SELECT password FROM sitters WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $this->id);
+        $stmt->execute();
 
-    if ($stmt->rowCount() == 0) {
-        return false;
+        if ($stmt->rowCount() == 0) {
+            return false;
+        }
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return password_verify($input_password, $row['password']);
     }
 
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    return password_verify($input_password, $row['password']);
-}
+    public static function getAvailableDatesBySitterId($sitter_id, $pdo) {
+
+    $sql = "SELECT id, start_date, end_date, note 
+            FROM sitter_available_dates
+            WHERE sitter_id = :id
+            ORDER BY start_date";
+
+        $stmt = $pdo->prepare($sql);//$this不可以在static用
+        $stmt->bindParam(':id', $sitter_id);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
 }
 ?>

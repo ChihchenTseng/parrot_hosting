@@ -6,7 +6,7 @@ if (!empty($_POST['id']) && !empty($_POST['password'])) {
     require_once '../models/sitter_model.php';
 
     // 建立物件，只需要 id 和 raw password
-    $sitter = new Sitter_select(
+    $sitter = new Sitter (
         $_POST['id'], "", "", "", "", $_POST['password'], $pdo
     );
 
